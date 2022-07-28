@@ -79,15 +79,7 @@
     center: [32.56,15.500556], // starting position [lng, lat]
     zoom: 5 // starting zoom
   });
-  function createPopup(currentFeature) {
-  const popups = document.getElementsByClassName("mapboxgl-popup");
-  /** Check if there is already a popup on the map and if so, remove it */
-  if (popups[0]) popups[0].remove();
-  const popup = new mapboxgl.Popup({ closeOnClick: true })
-    .setLngLat(currentFeature.geometry.coordinates)
-    .setHTML("<h3>" + currentFeature.properties[config.popupInfo] + "</h3>")
-    .addTo(map);
-}
+ 
   map.on('load', () => {
     map.addLayer({
       id: 'City',
@@ -103,8 +95,16 @@
       'circle-color': 'rgb(171, 72, 33)'
     }
     })
-
+    function createPopup(currentFeature) {
+  const popups = document.getElementsByClassName("mapboxgl-popup");
+  /** Check if there is already a popup on the map and if so, remove it */
+  if (popups[0]) popups[0].remove();
+  const popup = new mapboxgl.Popup({ closeOnClick: true })
+    .setLngLat(currentFeature.geometry.coordinates)
+    .setHTML("<h3>" + currentFeature.properties[config.popupInfo] + "</h3>")
+    .addTo(map);
 }
+})
     
        // When a click event occurs on a feature in the csvData layer, open a popup at the
 // location of the feature, with description HTML from its properties.
