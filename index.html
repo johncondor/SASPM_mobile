@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <title>Sudan Protest Monitor </title>
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css' rel='stylesheet' />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+          /* Popup styling */
+
+    .mapboxgl-popup {
+      padding-bottom: 5px;
+    }
+
+    .mapboxgl-popup-close-button {
+      display: none;
+    }
+
+    .mapboxgl-popup-content {
+      font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+      padding: 0;
+      width: 250px;
+    }
+
+    .mapboxgl-popup-content-wrapper {
+      padding: 1%;
+    }
+
+    .mapboxgl-popup-content h3 {
+      background: rgb(61, 59, 59);
+      text-align: center;
+      color: #fff;
+      margin: 0;
+      display: block;
+      padding: 15px;
+      font-weight: 700;
+      margin-top: -5px;
+    }
+
+    .mapboxgl-popup-content h4 {
+      margin: 0;
+      display: block;
+      padding: 10px 3px 10px 10px;
+      font-weight: 400;}
+
+      .mapboxgl-container {
+      cursor: pointer;
+    }
+
+    .mapboxgl-popup-anchor-top>.mapboxgl-popup-content {
+      margin-top: 3px;
+    }
+
+    .mapboxgl-popup-anchor-top>.mapboxgl-popup-tip {
+      border-bottom-color: rgb(61, 59, 59);
+    </style>
+  }
+  </head>
+  <body>
+
+  <div id='map'></div>
+  <script>
+  mapboxgl.accessToken = 'pk.eyJ1Ijoic3RpbnNvbi1nZW9ncmFwaGl4IiwiYSI6ImNrdmgwMTh1d2M2cm4ycXE2N3djZmRuNmMifQ.8hfaK8cqHFTCRJQKedBZFg';
+  const map = new mapboxgl.Map({
+    container: 'map', // container id
+    style: 'mapbox://styles/mapbox/light-v10', // stylesheet location
+    center: [32.56,15.500556], // starting position [lng, lat]
+    zoom: 5 // starting zoom
+  });
+
+  map.on('load', () => {
+    map.addLayer({
+      id: 'City',
+      type: 'circle',
+      source: {
+        type: 'vector',
+        url: 'mapbox://stinson-geographix.48fg15nw'
+      },
+      'source-layer': 'SudanProtests_-_Sheet2-1zax19',
+      paint: {
+      'circle-radius': ['/',['get', 'Count'],2],
+      'circle-opacity': 0.8,
+      'circle-color': 'rgb(171, 72, 33)'
+    }
+    });
+   // When a click event occurs on a feature in the csvData layer, open a popup at the
+// location of the feature, with description HTML from its properties.
+map.on('click', 'SudanProtests_-_Sheet2-1zax19', function(e) {
+  var coordinates = e.features[0].geometry.coordinates.slice();
+
+  //set popup text
+  //You can adjust the values of the popup to match the headers of your CSV.
+  // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
+  var description =
+    `<h3>` +
+    e.features[0].properties.City +
+    `</h3>` +
+    `<h4>` +
+    `<b>` +
+    `` +
+    `</b>` +
+    e.features[0].properties.Count +
+    `</h4>` +
+    `<h4>` +
+    `<b>` +
+    `Protests since October 2021 ` +
+    `</b>`;
+
+  // Ensure that if the map is zoomed out such that multiple
+  // copies of the feature are visible, the popup appears
+  // over the copy being pointed to.
+  while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+  }
+
+  //add Popup to map
+
+  new mapboxgl.Popup()
+    .setLngLat(coordinates)
+    .setHTML(description)
+    .addTo(map);
+});
+
+// Change the cursor to a pointer when the mouse is over the places layer.
+map.on('mouseenter', 'SudanProtests_-_Sheet2-1zax19', function() {
+  map.getCanvas().style.cursor = 'pointer';
+});
+
+// Change it back to a pointer when it leaves.
+map.on('mouseleave', 'places', function() {
+  map.getCanvas().style.cursor = '';
+});
+
+var bbox = turf.bbox(data);
+map.fitBounds(bbox, { padding: 50 });
+  });
+
+  </script>
+
+  </body>
+</html>
