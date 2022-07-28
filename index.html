@@ -79,7 +79,15 @@
     center: [32.56,15.500556], // starting position [lng, lat]
     zoom: 5 // starting zoom
   });
-
+  function createPopup(currentFeature) {
+  const popups = document.getElementsByClassName("mapboxgl-popup");
+  /** Check if there is already a popup on the map and if so, remove it */
+  if (popups[0]) popups[0].remove();
+  const popup = new mapboxgl.Popup({ closeOnClick: true })
+    .setLngLat(currentFeature.geometry.coordinates)
+    .setHTML("<h3>" + currentFeature.properties[config.popupInfo] + "</h3>")
+    .addTo(map);
+}
   map.on('load', () => {
     map.addLayer({
       id: 'City',
@@ -94,8 +102,11 @@
       'circle-opacity': 0.8,
       'circle-color': 'rgb(171, 72, 33)'
     }
-    });
-   // When a click event occurs on a feature in the csvData layer, open a popup at the
+    })
+
+}
+    
+       // When a click event occurs on a feature in the csvData layer, open a popup at the
 // location of the feature, with description HTML from its properties.
 map.on('click', 'SudanProtests_-_Sheet2-1zax19', function(e) {
   var coordinates = e.features[0].geometry.coordinates.slice();
@@ -103,6 +114,7 @@ map.on('click', 'SudanProtests_-_Sheet2-1zax19', function(e) {
   //set popup text
   //You can adjust the values of the popup to match the headers of your CSV.
   // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
+  
   var description =
     `<h3>` +
     e.features[0].properties.City +
@@ -145,7 +157,7 @@ map.on('mouseleave', 'places', function() {
 
 var bbox = turf.bbox(data);
 map.fitBounds(bbox, { padding: 50 });
-  });
+  ;
 
   </script>
 
